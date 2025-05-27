@@ -1,0 +1,110 @@
+@startuml NoteSystem
+
+' Interfaces
+interface Serializable {
+}
+
+interface Versionable {
+    + Note nextVersion()
+}
+
+interface Reversable extends Versionable {
+  + Note revertVersion()
+}
+
+' Enums
+enum TestStatus {
+  PASSED
+  FAILED
+  NOT_RUN
+}
+
+' Main Note class
+class Note {
+  - title: String
+  - description: String
+  - text: String
+  - author: String
+  - deadline: Calendar
+  - static count: int
+  + getTitle(): String
+  + getDescription(): String
+  + getText(): String
+  + getAuthor(): String
+  + getDeadline(): Calendar
+  + static getCount(): int
+  + isSameNote(Note): boolean
+}
+
+' Specialized Note types
+class ProgrammingNote {
+  - language: String
+  - codeSnippet: String
+}
+
+class TestingNote {
+  - testCase: String
+  - testStatus: TestStatus
+  - isMandatory: boolean
+}
+
+' GUI classes
+class NoteAppGUI {
+  - notes: ArrayList<Note>
+  - currentNote: Note
+  - cardLayout: CardLayout
+  - mainPanel: JPanel
+  - noteTypeCombo: JComboBox
+  - titleField: JTextField
+  - descField: JTextField
+  - textArea: JTextArea
+  - authorField: JTextField
+  - deadline: JSpinner
+  - languageField: JTextField
+  - snippetField: JTextField
+  - testcaseField: JTextField
+  - successMessage: JLabel
+  + createWelcomePanel(): JPanel
+  + createFormPanel(): JPanel
+  + createViewPanel(): JPanel
+  + createEditNotePanel(): JPanel
+  - resetFields(): void
+  - readFromFile(): void
+}
+
+' Relationships
+Note <|-- ProgrammingNote : extends
+Note <|-- TestingNote : extends
+NoteAppGUI o-- Note : manages
+Note ..|> Serializable : implements
+Note ..|> Reversable : implements
+TestingNote o-- TestStatus : uses
+
+note right of Note
+  Base class for all types of notes
+  with common properties
+end note
+
+note right of NoteAppGUI
+  Main GUI class that handles
+  creating, viewing, editing,
+  and deleting notes
+end note
+
+note right of Serializable
+  Java interface for object
+  serialization to enable
+  saving notes to files
+end note
+
+note right of Versionable
+  Interface for objects that
+  support versioning
+end note
+
+note right of Reversable
+  Interface for objects that
+  can revert to previous versions
+end note
+
+@enduml
